@@ -1,35 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { m, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [mousePosition, setMousePosition] = useState({
+    x:0,
+    y:0
+  });
+
+  console.log(mousePosition);
+
+  useEffect(() => {
+
+    const mouseMove = e => {
+      setMousePosition({
+        x: e.clientX,
+        y: e.clientY
+      })
+    }
+    
+    window.addEventListener("mousemove", mouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", mouseMove);
+    }
+  }, []);
+
+  const [cursorVariant, setCursorVariant] = useState("default");
+
+  const variants = {
+
+    default: {
+      x: mousePosition.x -16,
+      y: mousePosition.y -16
+      
+    },
+
+    text: {
+      height: 150,
+      width: 150,
+      x: mousePosition.x -16,
+      y: mousePosition.y -16,
+      backgroundColor: "white",
+      mixBlendMode: "difference"
+    },
+
+    taping: {
+      scale: 1.8,
+    }
+
+  }
+
+  const textEnter = () => setCursorVariant("text");
+  const textLeave = () => setCursorVariant("default");
+
+
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      <h1 
+      onMouseEnter={textEnter}
+      onMouseLeave={textLeave}
+      className="title">HELLO WORLD</h1>
+      <motion.div 
+      className="cursor"
+      whileTap={{scale: 1.9}}
+      variants={variants}
+      animate={cursorVariant}
+      >
+
+      </motion.div>
+    </div>
+  );
 }
 
-export default App
+export default App;
